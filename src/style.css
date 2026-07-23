@@ -1,0 +1,199 @@
+:root {
+  --cell: 34px;
+  --ocean: #0d3b66;
+  --ocean-light: #1d5a8a;
+  --grid-line: #0a2f52;
+  --hit: #e63946;
+  --miss: #cfe8ff;
+  --ship: #4a5568;
+  --ok: #2a9d8f;
+  --bad: #e76f51;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #f1faee;
+  background: radial-gradient(circle at top, #14507e, #061826 70%);
+  display: flex;
+  justify-content: center;
+}
+
+#app {
+  width: 100%;
+  max-width: 920px;
+  padding: 24px 16px 48px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0 0 4px;
+  font-size: 2.4rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.status {
+  min-height: 1.4em;
+  margin: 4px 0 16px;
+  font-size: 1.05rem;
+  color: #a8dadc;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  background: #457b9d;
+  color: #f1faee;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+button:hover {
+  background: #5a95ba;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+.boards {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.board-wrap h2 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a8dadc;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(10, var(--cell));
+  grid-template-rows: repeat(10, var(--cell));
+  gap: 2px;
+  padding: 6px;
+  background: var(--grid-line);
+  border-radius: 8px;
+  margin: 0 auto;
+}
+
+.cell {
+  width: var(--cell);
+  height: var(--cell);
+  padding: 0;
+  border-radius: 3px;
+  background: var(--ocean);
+  transition: background 0.1s ease;
+}
+
+.cell:not(:disabled):hover {
+  background: var(--ocean-light);
+}
+
+.cell.ship {
+  background: var(--ship);
+}
+
+.cell.hit {
+  background: var(--hit);
+  position: relative;
+}
+
+.cell.hit::after {
+  content: "✹";
+  color: #fff;
+  font-size: 0.8rem;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.cell.miss {
+  background: var(--miss);
+  position: relative;
+}
+
+.cell.miss::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4a7ba6;
+  position: absolute;
+  inset: 0;
+  margin: auto;
+}
+
+.cell.preview-ok {
+  background: var(--ok);
+}
+
+.cell.preview-bad {
+  background: var(--bad);
+}
+
+.fleet-status {
+  margin-top: 14px;
+  text-align: left;
+  display: inline-block;
+}
+
+.fleet-status h3 {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8fb8cc;
+}
+
+.fleet-status ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.fleet-status li {
+  padding: 2px 0;
+}
+
+.fleet-status li.sunk {
+  color: var(--hit);
+  text-decoration: line-through;
+}
+
+.fleet-status li.afloat {
+  color: #cde7f0;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --cell: 28px;
+  }
+  .boards {
+    gap: 24px;
+  }
+}
