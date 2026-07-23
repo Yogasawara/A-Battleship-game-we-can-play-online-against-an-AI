@@ -155,32 +155,37 @@ function endGame(playerWon) {
 
 // ---- Rendering ----------------------------------------------------------
 
+// Cells the current hovered ship would occupy: Set of "row,col,ok|bad".
+function computePreview(board) {
+  const previewCells = new Set();
+  if (!state.hover || !currentShip()) return previewCells;
+  const ship = currentShip();
+  const cells = shipCells(state.hover.row, state.hover.col, ship.length, state.orientation);
+  if (!cells) return previewCells;
+  const valid = board.canPlace(state.hover.row, state.hover.col, ship.length, state.orientation);
+  cells.forEach(({ row, col }) =>
+    previewCells.add(`${row},${col},${valid ? "ok" : "bad"}`)
+  );
+  return previewCells;
+}
+
+// Repaints only the preview classes on an existing placement grid, so hovering
+// never rebuilds the DOM (which would destroy the button under the cursor and
+// swallow the click that places a ship).
+function refreshPreview(grid, board) {
+  const previewCells = computePreview(board);
+  grid.querySelectorAll(".cell").forEach((cell) => {
+    const key = `${cell.dataset.row},${cell.dataset.col}`;
+    cell.classList.toggle("preview-ok", previewCells.has(`${key},ok`));
+    cell.classList.toggle("preview-bad", previewCells.has(`${key},bad`));
+  });
+}
+
 function buildGrid(board, { reveal, interactive, onClick, showPreview }) {
   const grid = document.createElement("div");
   grid.className = "grid";
 
-  const previewCells = new Set();
-  if (showPreview && state.hover && currentShip()) {
-    const cells = shipCells(
-      state.hover.row,
-      state.hover.col,
-      currentShip().length,
-      state.orientation
-    );
-    const valid =
-      cells &&
-      board.canPlace(
-        state.hover.row,
-        state.hover.col,
-        currentShip().length,
-        state.orientation
-      );
-    if (cells) {
-      cells.forEach(({ row, col }) =>
-        previewCells.add(`${row},${col},${valid ? "ok" : "bad"}`)
-      );
-    }
-  }
+  const previewCells = showPreview ? computePreview(board) : new Set();
 
   for (let r = 0; r < BOARD_SIZE; r++) {
     for (let c = 0; c < BOARD_SIZE; c++) {
@@ -204,7 +209,7 @@ function buildGrid(board, { reveal, interactive, onClick, showPreview }) {
         if (showPreview) {
           cell.addEventListener("mouseenter", () => {
             state.hover = { row: r, col: c };
-            render();
+            refreshPreview(grid, board);
           });
         }
       } else {
